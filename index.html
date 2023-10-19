@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+ 
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #c3c3c3;
+          color: #dbd9d9;
+        }
+    
+        .container {
+          background-color: #4a4a4a;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          text-align: center;
+        }
+
+    
+        h1 {
+          color: #dbd9d9;
+        }
+    
+        .saldo {
+          font-size: 24px;
+          font-weight: bold;
+          color: #7ce71f;
+          margin-bottom: 20px;
+        }
+    
+        .saldo span {
+          font-size: 28px;
+        }
+    
+        .valor-input {
+          width: 100%;
+          max-width: 200px;
+          margin: 10px auto;
+        }
+    
+        .btn {
+          background: #cd0d0d;
+          color: #fff;
+          border: none;
+          padding: 10px 20px;
+          cursor: pointer;
+        }
+    
+        .btn:hover {
+          background: #9a0a0a;
+          color: #ebe3e3;
+        }
+    
+        .btn-clear {
+          background: #db1c1c;
+          color: #ffffff;
+        }
+    
+        .rodape {
+          margin-top: 20px;
+          color: #ffffff;
+        }
+      </style>
+      <title>NADABANK</title>
+    </head>
+    
+    <body>
+      <div class="container">
+        <h1>NADA BANK</h1>
+        <div id="user-info">
+          <h2>Olá, <span id="username"></span>!</h2>
+          <p class="saldo">Seu saldo: R$ <span id="saldo">5,000.00</span></p>
+        </div>
+        <div id="operacoes">
+          <h3>Realizar Operações:</h3>
+          <input type="number" id="valor-operacao" placeholder="Operação" class="valor-input" />
+          <button class="btn" onclick="realizarOperacao('add')">Adicionar</button>
+          <button class="btn" onclick="realizarOperacao('sub')">Subtrair</button>
+        </div>
+        <div id="pagamento">
+          <h3>Cadastro de Salário:</h3>
+          <input type="number" id="valor-pagamento" placeholder="Salário R$" class="valor-input" />
+          <button class="btn" onclick="cadastrarPagamento()">Cadastrar Salário</button>
+        </div>
+        <div id="info-pagamento">
+          <h3>Info de Pagamento:</h3>
+          <p>Salário R$ <span id="valor-pagamento-unico">0.00</span></p>
+        </div>
+        <div id="utilizar-pagamento">
+          <button class="btn" onclick="utilizarPagamento()">Dia do Pagamento</button>
+        </div>
+        <br>
+        
+        <button class="btn btn-clear" onclick="sair()">Sair</button>
+        <div class="rodape">NADA CORP. INC.</div>
+      </div>
+
+  <script>
+    const storageKey = 'user-data';
+    let userData = JSON.parse(localStorage.getItem(storageKey)) || { username: null, saldo: 5000, pagamentoUnico: 0 };
+
+    function atualizarTela() {
+      document.getElementById('username').textContent = userData.username || 'Usuário';
+      document.getElementById('saldo').textContent = userData.saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('valor-pagamento-unico').textContent = userData.pagamentoUnico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function realizarOperacao(operacao) {
+      const valor = parseFloat(document.getElementById('valor-operacao').value);
+      if (isNaN(valor)) return;
+
+      if (operacao === 'add') {
+        userData.saldo += valor;
+      } else if (operacao === 'sub') {
+        userData.saldo -= valor;
+      }
+
+      atualizarTela();
+      salvarDados();
+      limparCampos();
+    }
+
+    function cadastrarPagamento() {
+      const valorPagamento = parseFloat(document.getElementById('valor-pagamento').value);
+      if (isNaN(valorPagamento)) return;
+
+      userData.pagamentoUnico = valorPagamento;
+      atualizarTela();
+      salvarDados();
+      limparCampos();
+    }
+
+    function sair() {
+      localStorage.removeItem(storageKey);
+      location.reload();
+    }
+
+    function salvarDados() {
+      localStorage.setItem(storageKey, JSON.stringify(userData));
+    }
+
+    if (userData.username === null) {
+      const username = prompt('Por favor, insira seu nome:');
+      userData.username = username;
+      atualizarTela();
+      salvarDados();
+    } else {
+      atualizarTela();
+    }
+
+    function limparCampos() {
+      document.getElementById('valor-operacao').value = '';
+      document.getElementById('valor-pagamento').value = '';
+    }
+
+    function utilizarPagamento() {
+      userData.saldo += userData.pagamentoUnico;
+      atualizarTela();
+      salvarDados();
+    }
+  </script>
+</body>
+</html>
